@@ -23,7 +23,7 @@ void main(List<String> arguments) {
 }
 
 
-//* START ISOLATE *//
+//* START ISOLATE */
 //* READ, MICRO, EVENT are QUEUES
 ////--------------------------------------------////
 // ------READ: End 12 11 10 9 8 7 6 5 4 3 2 1 Start
@@ -61,4 +61,4 @@ void main(List<String> arguments) {
 //* ---EVENT :
 //? --OUTPUT : Start End 5 7 9 1 6 8 11 10 2 12 3 4
 ////--------------------------------------------////
-//* END ISOLATE *//
+//* END ISOLATE */
