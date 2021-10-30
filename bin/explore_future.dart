@@ -1,56 +1,59 @@
+import 'dart:async';
+
 void main(List<String> arguments) {
-  print("Start");
+  print("1");
+  scheduleMicrotask(() => print("2"));
 
-  Future(() => 1).then(print);
-  Future(() => Future(() => 2)).then(print);
+  Future.delayed(Duration(seconds: 1), () => print("3"));
 
-  // when duration is zero
-  Future.delayed(Duration(seconds: 0), () => 3).then(print);
-  // => Future(() => 3);
-  Future.delayed(Duration(seconds: 0), () => Future(() => 4)).then(print);
-  // Future(() => Future(() => 4));
+  Future(() => print("4")).then((_) => print("5")).then((_) {
+    print("6");
+    scheduleMicrotask(() => print("7"));
+  }).then((_) => print("8"));
 
-  Future.value(5).then(print);
-  Future.value(Future(() => 6)).then(print);
+  scheduleMicrotask(() => print("9"));
 
-  Future.sync(() => 7).then(print);
-  Future.sync(() => Future(() => 8)).then(print);
+  Future(() => print("10"))
+      .then((_) => Future(() => print("11")))
+      .then((_) => print("12"));
 
-  Future.microtask(() => 9).then(print);
-  Future.microtask(() => Future(() => 10)).then(print);
-
-  Future(() => 11).then(print);
-  Future(() => Future(() => 12)).then(print);
-
-  print("End");
+  Future(() => print("13"));
+  scheduleMicrotask(() => print("14"));
+  print("15");
 }
 
 
 //* START ISOLATE */
-//* READ, MICRO, EVENT are QUEUES
 ////--------------------------------------------////
-// -----READ : End 12 11 10 9 8 7 6 5 4 3 2 1 Start
+//! ---MICRO : 14 9 2
+//* ---EVENT : 3 | 13 10 4
+//? --OUTPUT : 1 15
+////--------------------------------------------////
+//! ---MICRO :
+//* ---EVENT : 3 | 13 10 4
+//? --OUTPUT : 1 15 2 9 14
+////--------------------------------------------////
+//! ---MICRO : 7
+//* ---EVENT : 3 | 13 10
+//? --OUTPUT : 1 15 2 9 14 4 5 6
+////--------------------------------------------////
+//! ---MICRO :
+//* ---EVENT : 3 | 13 10
+//? --OUTPUT : 1 15 2 9 14 4 5 6 7 8
+////--------------------------------------------////
+//! ---MICRO :
+//* ---EVENT : 3 | F(11) 13
+//? --OUTPUT : 1 15 2 9 14 4 5 6 7 8 10
+////--------------------------------------------////
+//! ---MICRO :
+//* ---EVENT : 3 | 12 11
+//? --OUTPUT : 1 15 2 9 14 4 5 6 7 8 10 13
+////--------------------------------------------////
+//! ---MICRO :
+//* ---EVENT : 3 |
+//? --OUTPUT : 1 15 2 9 14 4 5 6 7 8 10 13 11 12
+////--------------------------------------------////
 //! ---MICRO :
 //* ---EVENT :
-//? --OUTPUT :
-////--------------------------------------------////
-// -----READ :
-//! ---MICRO : F(10) 9 7 5
-//* ---EVENT : F(12) 11 8 6 F(4) 3 F(2) 1
-//? --OUTPUT : Start End
-////--------------------------------------------////
-// -----READ :
-//! ---MICRO :
-//* ---EVENT : 10 F(12) 11 8 6 F(4) 3 F(2) 1
-//? --OUTPUT : Start End 5 7 9
-////--------------------------------------------////
-// -----READ :
-//! ---MICRO :
-//* ---EVENT : 12 4 2
-//? --OUTPUT : Start End 5 7 9 1 3 6 8 11 10
-////--------------------------------------------////
-// -----READ :
-//! ---MICRO :
-//* ---EVENT :
-//? --OUTPUT : Start End 5 7 9 1 6 8 11 10 2 4 12
+//? --OUTPUT : 1 15 2 9 14 4 5 6 7 8 10 13 11 12 3
 //* END ISOLATE */
