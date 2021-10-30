@@ -4,8 +4,11 @@ void main(List<String> arguments) {
   Future(() => 1).then(print);
   Future(() => Future(() => 2)).then(print);
 
-  Future.delayed(Duration(seconds: 1), () => 3).then(print);
-  Future.delayed(Duration(seconds: 1), () => Future(() => 4)).then(print);
+  // when duration is zero
+  Future.delayed(Duration(seconds: 0), () => 3).then(print);
+  // => Future(() => 3);
+  Future.delayed(Duration(seconds: 0), () => Future(() => 4)).then(print);
+  // Future(() => Future(() => 4));
 
   Future.value(5).then(print);
   Future.value(Future(() => 6)).then(print);
@@ -33,32 +36,21 @@ void main(List<String> arguments) {
 ////--------------------------------------------////
 // -----READ :
 //! ---MICRO : F(10) 9 7 5
-//* ---EVENT : F(4) 3 | F(12) 11 8 6 F(2) 1
+//* ---EVENT : F(12) 11 8 6 F(4) 3 F(2) 1
 //? --OUTPUT : Start End
 ////--------------------------------------------////
 // -----READ :
 //! ---MICRO :
-//* ---EVENT : F(4) 3 | 10 F(12) 11 8 6 F(2) 1
+//* ---EVENT : 10 F(12) 11 8 6 F(4) 3 F(2) 1
 //? --OUTPUT : Start End 5 7 9
 ////--------------------------------------------////
 // -----READ :
 //! ---MICRO :
-//* ---EVENT : F(4) 3 | 12 2
-//? --OUTPUT : Start End 5 7 9 1 6 8 11 10
-////--------------------------------------------////
-// -----READ :
-//! ---MICRO :
-//* ---EVENT : F(4) 3 |
-//? --OUTPUT : Start End 5 7 9 1 6 8 11 10 2 12
-////--------------------------------------------////
-// -----READ :
-//! ---MICRO :
-//* ---EVENT : 4
-//? --OUTPUT : Start End 5 7 9 1 6 8 11 10 2 12 3
+//* ---EVENT : 12 4 2
+//? --OUTPUT : Start End 5 7 9 1 3 6 8 11 10
 ////--------------------------------------------////
 // -----READ :
 //! ---MICRO :
 //* ---EVENT :
-//? --OUTPUT : Start End 5 7 9 1 6 8 11 10 2 12 3 4
-////--------------------------------------------////
+//? --OUTPUT : Start End 5 7 9 1 6 8 11 10 2 4 12
 //* END ISOLATE */
