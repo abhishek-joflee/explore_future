@@ -24,7 +24,8 @@ void main(List<String> arguments) {
 
 
 //* START ISOLATE */
-//* READ, MICRO, EVENT are QUEUES
+//* READ, MICRO, EVENT are QUEUES ( RIGHT_TO_LEFT )
+//* OUTPUT ( LEFT_TO_RIGHT )
 ////--------------------------------------------////
 // -----READ : End 12 11 10 9 8 7 6 5 4 3 2 1 Start
 //! ---MICRO :
